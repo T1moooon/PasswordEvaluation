@@ -1,23 +1,34 @@
 import urwid
 
+
+MIN_PASSWORD_LENGHT = 12
+
+
 # Проверка пароля
 def has_digit(password):
     return any(letter.isdigit() for letter in password)
 
+
 def has_letters(password):
     return any(letter.isalpha() for letter in password)
+
 
 def has_upper_letters(password):
     return any(letter.isupper() for letter in password)
 
+
 def has_lower_letters(password):
     return any(letter.islower() for letter in password)
 
+
 def is_very_long(password):
-    return len(password) >= 12
+    return len(password) >= MIN_PASSWORD_LENGHT
+
 
 def has_symbols(password):
     return any(not letter.isdigit() and not letter.isalpha() for letter in password)
+
+
 # Подсчёт рейтинга
 def calculate_score(password):
     score = 0
@@ -33,24 +44,25 @@ def calculate_score(password):
     for check, points in checks:
         if check(password):
             score += points
-    
     return score
+
+
 # Вывод на экран с счётчиком рейтинга
 def on_password_change(edit, new_password):
     score = calculate_score(new_password)
     rating_text.set_text(f'Рейтинг пароля: {score}')
 
-edit_password = urwid.Edit('Введите пароль: ')
-rating_text = urwid.Text("Рейтинг пароля: 0")
-
-pile = urwid.Pile([edit_password, rating_text])
-fill = urwid.Filler(pile)
-
-urwid.connect_signal(edit_password, 'change', on_password_change)
 
 def main():
+    global rating_text
+    edit_password = urwid.Edit('Введите пароль: ')
+    rating_text = urwid.Text("Рейтинг пароля: 0")
+    pile = urwid.Pile([edit_password, rating_text])
+    fill = urwid.Filler(pile)
+    urwid.connect_signal(edit_password, 'change', on_password_change)
     loop = urwid.MainLoop(fill)
     loop.run()
+
 
 if __name__ == "__main__":
     main()
